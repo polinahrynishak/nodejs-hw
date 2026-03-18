@@ -1,10 +1,28 @@
 import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
 
-// Всі нотатки
+// Всі нотатки з пагінацією
 export const getAllNotes = async (req, res) => {
-  const notes = await Note.find();
-  res.status(200).json(notes);
+  const { page = 1, perPage = 15 } = req.query;
+
+  const skip = (page - 1) * perPage;
+
+  const notesQuery = Note.find();
+
+  const [totalNotes, notes] = await Promise.all([
+    notesQuery.clone().countDocuments(),
+    notesQuery.skip(skip).limit(perPage),
+  ]);
+
+  const totalPages = Math.ceil(totalNotes / perPage);
+
+  res.status(200).json({
+    page,
+    perPage,
+    totalNotes,
+    totalPages,
+    notes,
+  });
 };
 
 // Нотатка по Id
