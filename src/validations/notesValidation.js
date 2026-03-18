@@ -1,5 +1,6 @@
 import { Joi, Segments } from 'celebrate';
 import { isValidObjectId } from 'mongoose';
+import { TAGS } from '../constants/tags';
 
 // GET
 export const getAllNotesSchema = {
@@ -14,23 +15,11 @@ export const getAllNotesSchema = {
       'number.max': 'PerPage must be at most {#limit}',
     }),
     tag: Joi.string()
-      .valid(
-        'Shopping',
-        'Meeting',
-        'Travel',
-        'Health',
-        'Work',
-        'Finance',
-        'Personal',
-        'Ideas',
-        'Important',
-        'Todo',
-      )
+      .valid(...TAGS)
       .messages({
-        'any.only':
-          'Tag must be one of: Shopping, Meeting, Travel, Health, Work, Finance, Personal, Ideas, Important, Todo',
+        'any.only': `Tag must be one of: ${TAGS.join(', ')}`,
       }),
-    search: Joi.string().allow('').messages({
+    search: Joi.string().trim().allow('').messages({
       'string.base': 'Search must be a string',
     }),
   }),
@@ -48,21 +37,9 @@ export const createNoteSchema = {
       'string.base': 'Content must be a string',
     }),
     tag: Joi.string()
-      .valid(
-        'Shopping',
-        'Meeting',
-        'Travel',
-        'Health',
-        'Work',
-        'Finance',
-        'Personal',
-        'Ideas',
-        'Important',
-        'Todo',
-      )
+      .valid(...TAGS)
       .messages({
-        'any.only':
-          'Tag must be one of: Shopping, Meeting, Travel, Health, Work, Finance, Personal, Ideas, Important, Todo',
+        'any.only': `Tag must be one of: ${TAGS.join(', ')}`,
       }),
   }),
 };
@@ -93,21 +70,9 @@ export const updateNoteSchema = {
       'string.base': 'Content must be a string',
     }),
     tag: Joi.string()
-      .valid(
-        'Shopping',
-        'Meeting',
-        'Travel',
-        'Health',
-        'Work',
-        'Finance',
-        'Personal',
-        'Ideas',
-        'Important',
-        'Todo',
-      )
+      .valid(...TAGS)
       .messages({
-        'any.only':
-          'Tag must be one of: Shopping, Meeting, Travel, Health, Work, Finance, Personal, Ideas, Important, Todo',
+        'any.only': `Tag must be one of: ${TAGS.join(', ')}`,
       }),
   })
     .min(1)

@@ -3,11 +3,19 @@ import createHttpError from 'http-errors';
 
 // Всі нотатки з пагінацією
 export const getAllNotes = async (req, res) => {
-  const { page = 1, perPage = 15 } = req.query;
+  const { page = 1, perPage = 15, tag, search } = req.query;
 
   const skip = (page - 1) * perPage;
 
   const notesQuery = Note.find();
+
+  if (search) {
+    notesQuery.where({ $text: { $search: search } });
+  }
+
+  if (tag) {
+    notesQuery.where('tag').equals(tag);
+  }
 
   const [totalNotes, notes] = await Promise.all([
     notesQuery.clone().countDocuments(),
